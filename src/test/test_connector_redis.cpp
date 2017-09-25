@@ -25,6 +25,7 @@ using namespace std;
 #define TEST_PORT 6380
 #define TEST_HOST "127.0.0.1"
 #define TEST_QUEUE "mytest"
+#define TEST_CLIENT "testclient"
 
 #define TEST_MODULE "[connector_redis]"
 
@@ -75,6 +76,16 @@ TEST_CASE_METHOD(F, "test_redis_success", TEST_MODULE) {
   handler.response = "exampleresponse";
   string result;
   client.SendRPCMessage("examplerequest", result);
+
+  CHECK(handler.request == "examplerequest");
+  CHECK(result == "exampleresponse");
+}
+
+TEST_CASE_METHOD(F, "test_redis_success_named", TEST_MODULE) {
+  RedisClient client2(TEST_HOST, TEST_PORT, TEST_QUEUE, TEST_CLIENT);
+  handler.response = "exampleresponse";
+  string result;
+  client2.SendRPCMessage("examplerequest", result);
 
   CHECK(handler.request == "examplerequest");
   CHECK(result == "exampleresponse");

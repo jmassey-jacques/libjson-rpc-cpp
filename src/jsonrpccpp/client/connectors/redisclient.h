@@ -41,8 +41,10 @@ namespace jsonrpc
              * @param host The ip address of the redis server.
              * @param port The port of the redis server.
              * @param queue The queue to send to.
+             * @param name The name of this client.
              */
-            RedisClient(const std::string& host, int port, const std::string& queue);
+            RedisClient(const std::string& host, int port, const std::string& queue,
+                        const std::string& name = std::string());
             virtual ~RedisClient();
 
 
@@ -73,6 +75,11 @@ namespace jsonrpc
              * @brief Queue that we are messaging
              */
             std::string queue;
+
+            /**
+             * @brief The name of this client
+             */
+            std::string name;
 
             /**
              * @brief Timeout for http request in milliseconds

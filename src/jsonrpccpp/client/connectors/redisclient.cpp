@@ -10,6 +10,7 @@
 #include "redisclient.h"
 
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 #include <string>
 #include <sys/time.h>
@@ -103,8 +104,8 @@ void jsonrpc::GetReturnQueue(redisContext *con, const std::string &prefix,
 }
 
 RedisClient::RedisClient(const std::string &host, int port,
-                         const std::string &queue)
-    : queue(queue), con(NULL) {
+                         const std::string &queue, const std::string &name)
+    : queue(queue), con(NULL), name(name) {
   this->timeout = 10;
 
   con = redisConnect(host.c_str(), port);
@@ -135,7 +136,12 @@ RedisClient::~RedisClient() {
 void RedisClient::SendRPCMessage(const std::string &message,
                                  std::string &result) {
   std::string ret_queue;
-  GetReturnQueue(con, queue, ret_queue);
+  std::stringstream prefix;
+  prefix << queue;
+  if (name != std::string()) {
+      prefix << "<-" << name;
+  }
+  GetReturnQueue(con, prefix.str(), ret_queue);
 
   redisReply *ret;
   std::string data = ret_queue + "!" + message;

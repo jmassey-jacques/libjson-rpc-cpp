@@ -27,6 +27,20 @@ void Client::CallMethod(const std::string &name, const Json::Value &parameter,
   protocol->HandleResponse(response, result);
 }
 
+void Client::CallbackWrapper(asyncCallback callback, std::string& uuid,
+                             std::string& response, void * data) {
+    Json::Value result;
+    protocol->HandleResponse(response, result);
+    callback(uuid, result, data);
+}
+
+void Client::CallAsyncMethod(const std::string &name, const Json::Value &parameter,
+                        asyncCallback callback, void * data) {
+  std::string request, response;
+  protocol->BuildRequest(name, parameter, request, false);
+  connector.SendAsyncRPCMessage(request, this, callback, data);
+}
+
 void Client::CallProcedures(const BatchCall &calls, BatchResponse &result) {
   std::string request, response;
   request = calls.toString();

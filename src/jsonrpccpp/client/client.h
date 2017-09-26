@@ -32,11 +32,16 @@ namespace jsonrpc
 
             void        CallMethod          (const std::string &name, const Json::Value &parameter, Json::Value& result) ;
             Json::Value CallMethod          (const std::string &name, const Json::Value &parameter) ;
+            void        CallAsyncMethod     (const std::string &name, const Json::Value &parameter, asyncCallback callback, void * data = NULL) ;
 
             void           CallProcedures      (const BatchCall &calls, BatchResponse &response) ;
             BatchResponse  CallProcedures      (const BatchCall &calls) ;
 
             void        CallNotification    (const std::string& name, const Json::Value& parameter) ;
+
+
+        private:
+            void CallbackWrapper(asyncCallback callback, std::string& uuid, std::string& response, void * data);
 
         private:
            IClientConnector  &connector;
